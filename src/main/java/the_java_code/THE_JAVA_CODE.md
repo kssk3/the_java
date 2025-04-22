@@ -1,4 +1,4 @@
-# JVM 이해하기
+# 1. JVM 이해하기
 
 ## 자바, JVM, JRE, JDK
   
@@ -41,7 +41,7 @@
 
 참고 사이트 : https://www.geeksforgeeks.org/differences-jdk-jre-jvm/  
   
-# JVM 구조
+# 2. JVM 구조
 
 ![](https://media.geeksforgeeks.org/wp-content/uploads/20250328171009480921/jvm.webp)  
 출처 : https://media.geeksforgeeks.org/wp-content/uploads/20250328171009480921/jvm.webp  
@@ -79,6 +79,36 @@ JIT 컴파일러로 반복되는 코드를 모두 네이티브 코드로 바꿔�
 - https://www.geeksforgeeks.org/differences-jdk-jre-jvm/
 - https://inpa.tistory.com/entry/JAVA-%E2%98%95-JVM-%EB%82%B4%EB%B6%80-%EA%B5%AC%EC%A1%B0-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EC%98%81%EC%97%AD-%EC%8B%AC%ED%99%94%ED%8E%B8#%EB%84%A4%EC%9D%B4%ED%8B%B0%EB%B8%8C_%EB%A9%94%EC%84%9C%EB%93%9C_%EC%8A%A4%ED%83%9D_native_method_stack  
   
+# 3. 클래스 로더 
+  
+![](https://media.geeksforgeeks.org/wp-content/uploads/jvmclassloader.jpg)  
+출처 : https://media.geeksforgeeks.org/wp-content/uploads/jvmclassloader.jpg  
+  
+**클래스 로더**  
+- 로딩, 링크, 초기화 순으로 진행된다. 
+- 로딩  
+  - 클래스 로더가 .class 파일을 읽고 그 내용에 따라 적절한 바이너리 데이터를 만들고 "메소드" 영역에 저장  
+  - 이때 메소드 영역에 저장하는 데이터
+    - **FQCN** : (Full Qualified Class Name)
+    - Class | Interface | Enum
+    - 메소드와 변수
+  - 로딩이 끝나면 해당 클래스 타입의 Class 객체를 생성하여 "힙" 영역에 저장 
+- 링크 
+  - Verify, Prepare, Resolve(Optional) 세 단계로 나눠져 있다.
+  - 검증 : .class 파일 형식이 유효한지 체크한다.
+  - Preparation : 클래스 변수 (static 변수)와 기본값에 필요한 메모리
+  - Resolve : 심볼릭 메모리 레퍼런스를 메소드 영역에 있는 실제 레퍼런스로 교체한다.  
+- 초기화  
+  - static 변수의 값을 할당한다. (static 블럭이 있다민 이때 실행된다.)
+- 클래스 로더는 계층 구조로 이뤄져 있으면 기본적으로 세가지 클래스 로더가 제공된다.  
+  - 부트 스트랩 클래스로더 - JAVA-HOME\lib에 있는 코어 자바 API를 제공한다. 최상위 우선순위를 가진 클래스 로더 
+  - 플랫폼 클래스로더 - JAVA-HOME\lib\ext 폴더 또는 java.ext.dirs 시스템 변수에 해당하는 위치에 있는 클래스를 읽는다.
+  - 애플리 케이션 클래스로더 - 애플리케이션 클래스패스 (애플리케이션을 실행할 때 주는 -classpath 옵션 또는 java.class.path  
+환경 변수의 값에 해당하는 위치) 에서 클래스를 읽는다.  
+  
+
+  
+
 
   
 
