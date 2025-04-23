@@ -41,7 +41,7 @@
 
 참고 사이트 : https://www.geeksforgeeks.org/differences-jdk-jre-jvm/  
   
-# 2. JVM 구조
+## 2. JVM 구조
 
 ![](https://media.geeksforgeeks.org/wp-content/uploads/20250328171009480921/jvm.webp)  
 출처 : https://media.geeksforgeeks.org/wp-content/uploads/20250328171009480921/jvm.webp  
@@ -79,7 +79,7 @@ JIT 컴파일러로 반복되는 코드를 모두 네이티브 코드로 바꿔�
 - https://www.geeksforgeeks.org/differences-jdk-jre-jvm/
 - https://inpa.tistory.com/entry/JAVA-%E2%98%95-JVM-%EB%82%B4%EB%B6%80-%EA%B5%AC%EC%A1%B0-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EC%98%81%EC%97%AD-%EC%8B%AC%ED%99%94%ED%8E%B8#%EB%84%A4%EC%9D%B4%ED%8B%B0%EB%B8%8C_%EB%A9%94%EC%84%9C%EB%93%9C_%EC%8A%A4%ED%83%9D_native_method_stack  
   
-# 3. 클래스 로더 
+## 3. 클래스 로더 
   
 ![](https://media.geeksforgeeks.org/wp-content/uploads/jvmclassloader.jpg)  
 출처 : https://media.geeksforgeeks.org/wp-content/uploads/jvmclassloader.jpg  
@@ -106,7 +106,70 @@ JIT 컴파일러로 반복되는 코드를 모두 네이티브 코드로 바꿔�
   - 애플리 케이션 클래스로더 - 애플리케이션 클래스패스 (애플리케이션을 실행할 때 주는 -classpath 옵션 또는 java.class.path  
 환경 변수의 값에 해당하는 위치) 에서 클래스를 읽는다.  
   
+  
+# 2. 바이트 코드 조작
+  
+### 4. 코드 커버리지는 어떻게 측정할까?  
+  
+코드커버리지란 테스트 코드가 확인한 소스 코드를 %로 보여주는 API 다.
+- 대표적으로 JaCoCo를 써보자.
+- https://www.eclemma.org/jacoco/trunk/doc/index.html
+- http://www.semdesigns.com/Company/Publications/TestCoverage.pdf
+  
+pom.xml에 플러그인 추가  
+```
+<build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.8</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+```  
+  
+메이븐 빌드 
+```
+mvc clean verify
+```
 
+커버리지 만족 못할시 빌드 실패하도록 설정  
+```
+<execution>
+  <id>jacoco-check</id>
+      <goals>
+        <goal>check</goal>
+      </goals>
+    <configuration>
+  <rules>
+<rule>
+  <element>PACKAGE</element> 
+    <limits>
+      <limit>
+        <counter>LINE</counter> 
+        <value>COVEREDRATIO</value> 
+        <minimum>0.50</minimum>
+    </limit> </limits>
+  </rule> </rules>
+</configuration> </execution>
+```
+  
+##
   
 
 
