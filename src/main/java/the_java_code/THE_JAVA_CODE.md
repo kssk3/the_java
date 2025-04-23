@@ -169,8 +169,83 @@ mvc clean verify
 </configuration> </execution>
 ```
   
-##
+### 5. 모자에서 토끼를 꺼내는 마술
+아무것도 없는 Moja에서 "Rabbit"을 꺼내는 마술  
   
+- Moja.java  
+```java
+public class Moja {
+    public String pullOut() {
+        return "";
+    }
+}
+```  
+- Masulsa.java
+```java
+public class Masulsa {
+    public static void main(String[] args) {
+        System.out.println(new Moja().pullOut());
+    }
+}
+```
+  
+바이트코드 조작 라이브러리  
+- **ASM** : https://asm.ow2.io  
+예전부터 사용하던 고전적 방식으로 사용된 라이브러리다. 사용하기 위해선 코드에 대한 깊이가 요구 된다.
+- **Javassist** : https://www.javassist.org/  
+- **ByteBuddy** : https://bytebuddy.net/#/  
+최신 라이브러리로 사용하기가 편리하다.  
+  
+```java
+import static net.bytebuddy.matcher.ElementMatchers.named;
+import java.io.File;
+import java.io.IOException;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.implementation.FixedValue;
+
+public class Masulsa {
+
+    public static void main(String[] args) {
+        try {
+            new ByteBuddy().redefine(Moja.class)
+                    .method(named("pullOut")).intercept(FixedValue.value("Rabbit!"))
+                    .make().saveIn(new File("/Users/kssk3-/Desktop/study/the_java/target/classes/"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+//        System.out.println(new Moja().pullOut());
+    }
+}
+```  
+- ByteBuddy를 사용하여 바이트코드를 조작해 본다. 
+- 위에 방식이 제대로 동작하기 위해서는 `System.out.println(new Moja().pullOut())`의 코드 new Moja()가 먼저 컴파일이 읽으면 동작하지 않는다.  
+- Moja.class 컴파일된 절대 경로를 `new File("/Users/kssk3-/Desktop/study/the_java/target/classes/")`로 읽어온다.
+- 이 동작은 클래스로더에서 Moja.class를 읽어 오는 과정에서 ByteBuddy가 `method(named("pullOut"))` 메소드를 확인 후 같은 이름의 메서드가 있으면  
+값 `(Rabbit!)`을 넣어 놓는다.
+- 그래서 Moja.java 파일에는 빈 문자열이 있어도 클래스로더에서 Rabbit! 문자열이 이미 삽입 되어 있어 정상적으로 출력된다.  
+  
+```java
+import static net.bytebuddy.matcher.ElementMatchers.named;
+import java.io.File;
+import java.io.IOException;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.implementation.FixedValue;
+
+public class Masulsa {
+    public static void main(String[] args) {
+//        try {
+//            new ByteBuddy().redefine(Moja.class)
+//                    .method(named("pullOut")).intercept(FixedValue.value("Rabbit!"))
+//                    .make().saveIn(new File("/Users/kssk3-/Desktop/study/the_java/target/classes/"));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+        System.out.println(new Moja().pullOut());
+    }
+}
+
+Rabbit!
+```
 
 
   
